@@ -1,0 +1,212 @@
+========================================
+WORKFLOW MANAGER - BATCH DOSYALARI KULLANIM KILAVUZU
+========================================
+
+Bu dosya, Workflow Manager projesini kolayca çalıştırmak için hazırlanmış 
+batch dosyalarının nasıl kullanılacağını açıklar.
+
+========================================
+GEREKSİNİMLER
+========================================
+
+1. Java 17 veya üzeri
+   - Kontrol etmek için: java -version
+
+2. Maven 3.6+ veya Maven Wrapper (projede mevcut)
+   - Kontrol etmek için: mvn -version
+
+3. Node.js 18+ ve npm
+   - Kontrol etmek için: node -v ve npm -v
+
+4. MySQL 8.0+
+   - Yükleme yolu: C:\Program Files\MySQL\MySQL Server 8.0
+   - Kullanıcı adı: root
+   - Şifre: 12345
+   - Veritabanı: smart_workflow_db (otomatik oluşturulur)
+
+5. Angular CLI 17+ (npm install ile yüklenir)
+
+========================================
+BATCH DOSYALARI
+========================================
+
+1. backend.bat
+   - Backend (Spring Boot) uygulamasını başlatır
+   - MySQL veritabanını kontrol eder, yoksa oluşturur
+   - Uygulama: http://localhost:8080
+   - Swagger UI: http://localhost:8080/swagger-ui.html
+
+2. frontend.bat
+   - Frontend (Angular) uygulamasını başlatır
+   - Node modüllerini kontrol eder, yoksa yükler
+   - Uygulama: http://localhost:4200
+
+3. fullstack.bat
+   - Hem backend hem frontend'i aynı anda başlatır
+   - İki ayrı pencere açar
+   - Önce backend, 5 saniye sonra frontend başlar
+
+4. forcekillports.bat
+   - Port 8080 ve 4200'i kullanan process'leri zorla kapatır
+   - Port çakışması yaşandığında kullanın
+
+========================================
+KULLANIM ŞEKİLLERİ
+========================================
+
+=== YENİ BAŞLANGIÇ (Önerilen) ===
+
+1. Portları temizle (opsiyonel):
+   - forcekillports.bat çift tıklayın
+
+2. Full Stack'i başlat:
+   - fullstack.bat çift tıklayın
+   - İki pencere açılacak (backend ve frontend)
+
+3. Tarayıcıda açın:
+   - Frontend: http://localhost:4200
+   - Backend Swagger: http://localhost:8080/swagger-ui.html
+
+=== SADECE BACKEND ===
+
+1. backend.bat çift tıklayın
+2. Veritabanı otomatik kontrol edilir/oluşturulur
+3. Backend başlar: http://localhost:8080
+
+=== SADECE FRONTEND ===
+
+1. Backend'in çalıştığından emin olun (http://localhost:8080)
+2. frontend.bat çift tıklayın
+3. Frontend başlar: http://localhost:4200
+
+========================================
+VERİTABANI YAPILANDIRMASI
+========================================
+
+Backend başlatıldığında otomatik olarak:
+- MySQL bağlantısı kontrol edilir
+- smart_workflow_db veritabanı yoksa oluşturulur
+- JPA otomatik olarak tabloları oluşturur (ddl-auto=update)
+
+MySQL ayarları:
+- Yol: C:\Program Files\MySQL\MySQL Server 8.0
+- Kullanıcı: root
+- Şifre: 12345
+- Veritabanı: smart_workflow_db
+
+Eğer MySQL ayarlarınız farklıysa:
+- workflow-manager\src\main\resources\application.properties dosyasını düzenleyin
+- backend.bat dosyasındaki MYSQL_PATH, DB_USER, DB_PASSWORD değerlerini güncelleyin
+
+========================================
+VARSAYILAN GİRİŞ BİLGİLERİ
+========================================
+
+Uygulamaya giriş yapmak için:
+- Kullanıcı Adı: admin
+- Şifre: admin123
+
+Not: İlk çalıştırmada veritabanı boşsa, bu kullanıcıyı manuel olarak 
+oluşturmanız gerekebilir. Backend'in ilk başlatılmasında veritabanı 
+şeması otomatik oluşturulur.
+
+========================================
+SORUN GİDERME
+========================================
+
+=== Port Zaten Kullanımda ===
+- forcekillports.bat çalıştırın
+- Veya manuel olarak:
+  - netstat -ano | findstr :8080 (backend için)
+  - netstat -ano | findstr :4200 (frontend için)
+  - taskkill /F /PID <PID_NUMARASI>
+
+=== MySQL Bağlantı Hatası ===
+- MySQL servisinin çalıştığından emin olun
+- Windows Hizmetler'de "MySQL80" servisini kontrol edin
+- MySQL kullanıcı adı/şifresinin doğru olduğundan emin olun
+- MySQL yolunun doğru olduğundan emin olun
+
+=== Node Modülleri Hatalı ===
+- workflow-manager-ui klasörüne gidin
+- node_modules klasörünü silin
+- npm install çalıştırın
+
+=== Maven Build Hatası ===
+- Java 17 kurulu olduğundan emin olun
+- JAVA_HOME ortam değişkenini kontrol edin
+- mvnw.cmd dosyasının mevcut olduğundan emin olun
+
+=== CORS Hatası ===
+- Backend'in çalıştığından emin olun (http://localhost:8080)
+- application.properties'de CORS ayarlarını kontrol edin
+- Frontend'in proxy.conf.json yapılandırmasını kontrol edin
+
+========================================
+PROJE YAPISI
+========================================
+
+workflow_manager/
+├── workflow-manager/          # Backend (Spring Boot)
+│   ├── src/
+│   ├── pom.xml
+│   └── mvnw.cmd
+├── workflow-manager-ui/       # Frontend (Angular)
+│   ├── src/
+│   ├── package.json
+│   └── angular.json
+├── backend.bat                # Backend başlatma
+├── frontend.bat               # Frontend başlatma
+├── fullstack.bat              # Her ikisini başlatma
+├── forcekillports.bat         # Port temizleme
+└── KULLANIM.txt              # Bu dosya
+
+========================================
+DETAYLI ADIMLAR
+========================================
+
+İLK KURULUM:
+
+1. Projeyi klonlayın veya indirin
+2. Tüm gereksinimlerin kurulu olduğundan emin olun
+3. fullstack.bat çift tıklayın
+4. İlk başlatmada:
+   - Backend: Veritabanı oluşturulur, tablolar otomatik oluşur
+   - Frontend: Node modülleri yüklenir (birkaç dakika sürebilir)
+
+GÜNLÜ KULLANIM:
+
+1. fullstack.bat çift tıklayın
+2. Her iki pencere açılır
+3. Tarayıcıda http://localhost:4200 açın
+4. Giriş yapın (admin/admin123)
+
+DURDURMA:
+
+1. Her pencerede Ctrl+C tuşlarına basın
+2. Veya pencereyi kapatın
+3. Portları temizlemek için forcekillports.bat kullanın
+
+========================================
+NOTLAR
+========================================
+
+- Backend ve Frontend aynı anda çalışmalıdır
+- Frontend, Backend'e http://localhost:8080/api üzerinden bağlanır
+- Development modunda proxy yapılandırması kullanılır
+- Veritabanı şeması otomatik oluşturulur (ddl-auto=update)
+- Production için environment dosyalarını düzenleyin
+
+========================================
+DESTEK
+========================================
+
+Sorun yaşarsanız:
+1. Bu kılavuzu tekrar okuyun
+2. Sorun giderme bölümüne bakın
+3. Log dosyalarını kontrol edin
+4. Backend logları: Console çıktısı
+5. Frontend logları: Browser Console (F12)
+
+========================================
+
